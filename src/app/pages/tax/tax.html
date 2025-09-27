@@ -1,0 +1,71 @@
+<div class="mx-auto p-4 md:p-0 mt-8 w-full md:w-[730px] flex flex-col items-center justify-center">
+  <h1 class="font-bold text-3xl md:text-2xl bg-green-200 w-full text-center py-2 mb-4">Income Tax Calculator</h1>
+
+<!-- Inputs -->
+  <div class="mt-4 w-full flex flex-col md:flex-row justify-between gap-4 mb-4">
+    <p-floatlabel variant="on" class="flex-1">
+      <label for="grossSalary" class="z-10">Gross Salary</label>
+      <p-inputnumber inputId="grossSalary" name="grossSalary" class="w-full" [(ngModel)]="grossSalary" [min]="0" [max]="999999999">
+        <ng-template #incrementbuttonicon>
+          <span class="pi pi-plus"></span>
+        </ng-template>
+        <ng-template #decrementbuttonicon>
+          <span class="pi pi-minus"></span>
+        </ng-template>
+      </p-inputnumber>
+
+    </p-floatlabel>
+
+    <p-floatlabel variant="on" class="flex-1">
+      <label for="joiningMonth" class="z-10">Select Joining Month</label>
+      <p-select name="joiningMonth" [options]="months" [(ngModel)]="joiningMonth" optionLabel="monthName" class="w-full" />
+    </p-floatlabel>
+
+
+
+    <p-button label="Calculate" type="button" (click)="calculateSalary()" />
+  </div>
+
+<!-- Salary Breakup -->
+  @if (salaryBreakup()) {
+  <div class="flex flex-col md:flex-row gap-4 items-start justify-between p-4 border w-full md:w-[730px] md:h-[300px] m-4">
+    <!-- salaries and allowances -->
+    <div class="h-full flex flex-col w-full md:w-fit">
+      <h2 class="font-semibold text-lg border-b">Salaries & Allowances</h2>
+      <div class="flex-1">
+        @for(allowance of allowances() | keyvalue; track $index) {
+          <div class="flex mb-2">
+            <p class="w-56">{{allowancesNameMap[allowance.key]}}</p>
+            <p>{{allowance.value | currency: 'Rs. ' :'symbol':'1.0-0'}}</p>
+          </div>
+        }
+      </div>
+      <div class="flex mb-2 border-t font-semibold mt-auto">
+        <p class="w-56">Total Salary - Cost to School</p>
+        <p>{{salaryBreakup()?.totalSalary | currency: 'Rs. ' :'symbol':'1.0-0'}}</p>
+      </div>
+
+    </div>
+
+    <!-- Separator -->
+    <div class="bg-gray-500 w-full h-[1px] md:w-[1px] md:h-[266px]">&nbsp;</div>
+
+    <!-- Deductions -->
+    <div class="h-full flex flex-col w-full md:w-fit">
+      <h2 class="font-semibold text-lg border-b">Deductions</h2>
+      <div class="flex-1">
+        @for(deduction of deductions() | keyvalue; track $index) {
+          <div class="flex mb-2">
+            <p class="w-56">{{deductionsNameMap[deduction.key]}}</p>
+            <p>{{deduction.value | currency: 'Rs. ' :'symbol':'1.0-0'}}</p>
+          </div>
+        }
+      </div>
+      <div class="flex mb-2 border-t font-semibold mt-auto">
+        <p class="w-56">Net Payment - Take Home</p>
+        <p>{{salaryBreakup()?.netSalary | currency: 'Rs. ' :'symbol':'1.0-0'}}</p>
+      </div>
+    </div>
+  </div>
+  }
+</div>
