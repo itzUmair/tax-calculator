@@ -59,7 +59,7 @@ export class Salary {
     const employeePF = employerPF;
     const totalSalary = Math.round(grossSalary + employerPF + this.EOBI_EMPLOYER_CONTRIBUTION)
 
-    const incomeTax = this.calculateIncomeTax(grossSalary, joiningMonth)
+    const incomeTax = this.calculateIncomeTax(grossSalary-medical, joiningMonth)
 
     const netSalary = Math.round(grossSalary - (this.EOBI_EMPLOYEE_CONTRIBUTION + employeePF + incomeTax));
 
