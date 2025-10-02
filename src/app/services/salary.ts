@@ -59,12 +59,7 @@ export class Salary {
     const employeePF = employerPF;
     const totalSalary = Math.round(grossSalary + employerPF + this.EOBI_EMPLOYER_CONTRIBUTION)
 
-    const taxBracket = this.calculateIncomeTax(grossSalary, joiningMonth)
-
-    let incomeTax = 0
-    if (taxBracket) {
-      incomeTax = (grossSalary * taxBracket.taxPercentage) + taxBracket.additionalCharges
-    }
+    const incomeTax = this.calculateIncomeTax(grossSalary, joiningMonth)
 
     const netSalary = Math.round(grossSalary - (this.EOBI_EMPLOYEE_CONTRIBUTION + employeePF + incomeTax));
 
@@ -88,11 +83,22 @@ export class Salary {
     }
   }
 
-  calculateIncomeTax(salary: number, joiningMonth: number, ) {
-    const monthsTillFiscalYear = (this.FISCAL_YEAR_START_MONTH - joiningMonth) + 12;
+  calculateIncomeTax(salary: number, joiningMonth: number ) {
+
+    let monthsTillFiscalYear = this.FISCAL_YEAR_START_MONTH - joiningMonth;
+      if (joiningMonth >= this.FISCAL_YEAR_START_MONTH) {
+        monthsTillFiscalYear = (this.FISCAL_YEAR_START_MONTH - joiningMonth) + 12;
+      }
     const salaryForFiscalYear = monthsTillFiscalYear * salary
-    return this.TAX_BRACKETS.find(
+
+    const taxBracket = this.TAX_BRACKETS.find(
       (bracket) =>
         salaryForFiscalYear >= bracket.minIncome && salaryForFiscalYear < bracket.maxIncome)
+
+    const salaryAboveBracketMinimum = salaryForFiscalYear - taxBracket!.minIncome
+
+    const taxForYear = (salaryAboveBracketMinimum * taxBracket!.taxPercentage) + taxBracket!.additionalCharges
+
+    return taxForYear / monthsTillFiscalYear
   }
 }
